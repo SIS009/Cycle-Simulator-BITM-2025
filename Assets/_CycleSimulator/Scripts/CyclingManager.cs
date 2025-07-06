@@ -8,6 +8,9 @@ public class CyclingManager : MonoBehaviour
     [SerializeField] private Animator _cyclist;
     [SerializeField] private Animator _cycle;
 
+    [Header("Colliders")]
+    [SerializeField] private Collider endPoint;
+
     [Header("Cinemachine")]
     [SerializeField] private CinemachineDollyCart cycleSpeed;
 
@@ -19,6 +22,7 @@ public class CyclingManager : MonoBehaviour
     [Header("Speed Control")]
     public float currentValue = 0f;
     public float duration = 3f;
+    public float _cyclingSpeed = 20f;
     private float timer = 0f;
     private float startSpeed = 0f;
     private float targetSpeed = 0f;
@@ -34,23 +38,22 @@ public class CyclingManager : MonoBehaviour
 
     void Update()
     {
-        if (boardValueForMovement && !isCycling)
+        // 'boardValueForMovement' will control cycle directly from editor data
+        // 'ArduinoSerial.instance.cycleToMove' will control cycle from Arduino's data
+        // 'boardValueForMovement' or 'ArduinoSerial.instance.cycleToMove' anyone of these will control the cycle
+        if ((boardValueForMovement || !ArduinoSerial.instance.cycleToMove) && !isCycling)
         {
             // Start cycling
-            StartSpeedTransition(0f, 5f);
-            _cycle.SetBool("IsCycling", true);
-            _cyclist.SetBool("IsCycling", true);
-            isCycling = true;
+            OnStartCycling();
+
             isRunningFirstTime = false;
         }
-        else if (!boardValueForMovement && isCycling)
+        else if (!(boardValueForMovement || !ArduinoSerial.instance.cycleToMove) && isCycling)
         {
             // Stop cycling
-            StartSpeedTransition(5f, 0f);
-            _cycle.SetBool("IsCycling", false);
-            _cyclist.SetBool("IsCycling", false);
-            isCycling = false;
+            OnStopCycling();
         }
+        // --------------------------------------------------------------------------------------------------------
 
         // If transitioning, update speed over time
         if (isTransitioning)
@@ -63,6 +66,21 @@ public class CyclingManager : MonoBehaviour
             {
                 isTransitioning = false;
                 timer = 0f;
+            }
+        }
+        // --------------------------------------------------------------------------------------------------------
+
+        if (_cycle != null)
+        {
+            // Check if self object and Cycle are colliding
+            bool currentlyColliding = endPoint.bounds.Intersects(_cycle.GetComponent<Collider>().bounds);
+
+            if (currentlyColliding)
+            {
+                Debug.Log("Reached to the end...");
+
+                // Call when the cycle reachs the end point
+                OnStopCycling();
             }
         }
     }
@@ -79,5 +97,23 @@ public class CyclingManager : MonoBehaviour
     {
         yield return new WaitUntil(() => isCycling);
         // Can add additional logic here if needed
+    }
+
+    // Stop cycling
+    private void OnStopCycling()
+    {
+        StartSpeedTransition(_cyclingSpeed, 0f);
+        _cycle.SetBool("IsCycling", false);
+        _cyclist.SetBool("IsCycling", false);
+        isCycling = false;
+    }
+
+    // Start cycling
+    public void OnStartCycling()
+    {
+        StartSpeedTransition(0f, _cyclingSpeed);
+        _cycle.SetBool("IsCycling", true);
+        _cyclist.SetBool("IsCycling", true);
+        isCycling = true;
     }
 }
