@@ -1,0 +1,374 @@
+fileFormatVersion: 2
+guid: abc00000000003027527423680202001
+ModelImporter:
+  serializedVersion: 21300
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: //RootNode
+  - first:
+      1: 100002
+    second: SM_House_08_LOD0
+  - first:
+      1: 100004
+    second: SM_House_08_LOD1
+  - first:
+      1: 100006
+    second: SM_House_08_LOD2
+  - first:
+      1: 100008
+    second: SM_House_08_LOD3
+  - first:
+      1: 100010
+    second: SM_House_08_LOD4
+  - first:
+      4: 400000
+    second: //RootNode
+  - first:
+      4: 400002
+    second: SM_House_08_LOD0
+  - first:
+      4: 400004
+    second: SM_House_08_LOD1
+  - first:
+      4: 400006
+    second: SM_House_08_LOD2
+  - first:
+      4: 400008
+    second: SM_House_08_LOD3
+  - first:
+      4: 400010
+    second: SM_House_08_LOD4
+  - first:
+      21: 2100000
+    second: M_Concrete_A
+  - first:
+      21: 2100002
+    second: M_Wallpaper_B
+  - first:
+      21: 2100004
+    second: M_Bricks_Yellow_A
+  - first:
+      21: 2100006
+    second: M_Baseboard_A1_Ins
+  - first:
+      21: 2100008
+    second: M_Windows_A1
+  - first:
+      21: 2100010
+    second: M_Glass_A
+  - first:
+      21: 2100012
+    second: M_Painted_Metal_A
+  - first:
+      21: 2100014
+    second: M_Bricks_Yellow_A1
+  - first:
+      21: 2100016
+    second: M_Concrete_A1
+  - first:
+      21: 2100018
+    second: M_Wood_A1
+  - first:
+      21: 2100020
+    second: M_Wood_A
+  - first:
+      21: 2100022
+    second: M_Aluminium_A
+  - first:
+      21: 2100024
+    second: M_Floor_C1
+  - first:
+      21: 2100026
+    second: M_Stucco_White
+  - first:
+      21: 2100028
+    second: M_Roof_A_Yellow
+  - first:
+      21: 2100030
+    second: M_Wallpaper_A2
+  - first:
+      21: 2100032
+    second: M_Planks_Blue_A1
+  - first:
+      21: 2100034
+    second: M_Wood_A2
+  - first:
+      21: 2100036
+    second: M_WoodFloor_Blue
+  - first:
+      21: 2100038
+    second: M_Wood_B
+  - first:
+      21: 2100040
+    second: M_House_08
+  - first:
+      23: 2300000
+    second: SM_House_08_LOD0
+  - first:
+      23: 2300002
+    second: SM_House_08_LOD1
+  - first:
+      23: 2300004
+    second: SM_House_08_LOD2
+  - first:
+      23: 2300006
+    second: SM_House_08_LOD3
+  - first:
+      23: 2300008
+    second: SM_House_08_LOD4
+  - first:
+      33: 3300000
+    second: SM_House_08_LOD0
+  - first:
+      33: 3300002
+    second: SM_House_08_LOD1
+  - first:
+      33: 3300004
+    second: SM_House_08_LOD2
+  - first:
+      33: 3300006
+    second: SM_House_08_LOD3
+  - first:
+      33: 3300008
+    second: SM_House_08_LOD4
+  - first:
+      43: 4300000
+    second: SM_House_08_LOD0
+  - first:
+      43: 4300002
+    second: SM_House_08_LOD1
+  - first:
+      43: 4300004
+    second: SM_House_08_LOD2
+  - first:
+      43: 4300006
+    second: SM_House_08_LOD3
+  - first:
+      43: 4300008
+    second: SM_House_08_LOD4
+  - first:
+      43: 4300010
+    second: SM_House_08_ConvexHulls
+  - first:
+      205: 20500000
+    second: //RootNode
+  - first:
+      74: 1827226128182048838
+    second: Take 001
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Aluminium_A
+    second: {fileID: 2100000, guid: 06a30933fde2a3144baee47b1ea17fc7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Baseboard_A1_Ins
+    second: {fileID: 2100000, guid: 9f72f3d87b2ddd54896de9fa24696bdf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Bricks_Yellow_A
+    second: {fileID: 2100000, guid: d2252c601c3a7964c9c1b63ed8d0ef35, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Bricks_Yellow_A1
+    second: {fileID: 2100000, guid: d2252c601c3a7964c9c1b63ed8d0ef35, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Concrete_A
+    second: {fileID: 2100000, guid: b9cf2e18be310d7409fcf37f95bb38c8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Concrete_A1
+    second: {fileID: 2100000, guid: b9cf2e18be310d7409fcf37f95bb38c8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Floor_C1
+    second: {fileID: 2100000, guid: d1cab5f74df224d43bafdb4d0975a860, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Glass_A
+    second: {fileID: 2100000, guid: 78ea57c583fbeb540a2ad1649ca94479, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_House_08
+    second: {fileID: 2100000, guid: abc00000000004122641983718894842, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Painted_Metal_A
+    second: {fileID: 2100000, guid: c4cdec6d9f97a814ca3af38a5d528d22, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Planks_Blue_A1
+    second: {fileID: 2100000, guid: 3ea51af8b81233f46a7a4973f4100b1d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Roof_A_Yellow
+    second: {fileID: 2100000, guid: 26355e932e561f345aa46848da0b7a7a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Stucco_White
+    second: {fileID: 2100000, guid: 5771dffe1ff55194fb5aca7954f54267, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Wallpaper_A2
+    second: {fileID: 2100000, guid: cb97432c929cae749adee197c793ac48, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Wallpaper_B
+    second: {fileID: 2100000, guid: ec330a5d40e62b347ab78cf8bf214717, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Windows_A1
+    second: {fileID: 2100000, guid: 9f72f3d87b2ddd54896de9fa24696bdf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_WoodFloor_Blue
+    second: {fileID: 2100000, guid: 7bf204108624a8b4685216d474511771, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Wood_A
+    second: {fileID: 2100000, guid: 116bb75a71c31f0459b87f9ba9b8a21e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Wood_A1
+    second: {fileID: 2100000, guid: 3f58084692f8b204bb82ae8179e61d7e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Wood_A2
+    second: {fileID: 2100000, guid: 3f58084692f8b204bb82ae8179e61d7e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Wood_B
+    second: {fileID: 2100000, guid: 180d9fb43d7df1746bc432419234ddf9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: No Name
+    second: {fileID: 2100000, guid: 7408185900c21194dbce249233f3a8e9, type: 2}
+  materials:
+    materialImportMode: 1
+    materialName: 1
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages:
+    - 0.25
+    - 0.125
+    - 0.0625
+    - 0.03125
+    - 0.01
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 0
+    fileIdsGeneration: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 1
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 0
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: 1
+    indexFormat: 2
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 0
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 1
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 0
+  remapMaterialsIfMaterialImportModeIsNone: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
