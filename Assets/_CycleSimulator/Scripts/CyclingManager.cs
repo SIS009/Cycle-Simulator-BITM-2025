@@ -2,8 +2,15 @@ using System.Collections;
 using UnityEngine;
 using Cinemachine;
 
+
 public class CyclingManager : MonoBehaviour
 {
+    [Header("Sounds")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip startCyclingAudio;
+    [SerializeField] private AudioClip stopCyclingAudio;
+    [SerializeField] private AudioClip cyclingAudio;
+
     [Header("Animators")]
     [SerializeField] private Animator _cyclist;
     [SerializeField] private Animator _cycle;
@@ -28,6 +35,13 @@ public class CyclingManager : MonoBehaviour
     private float targetSpeed = 0f;
 
     private bool isTransitioning = false;
+
+    public static CyclingManager Instance;
+
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+    }
 
     void Start()
     {
@@ -106,6 +120,11 @@ public class CyclingManager : MonoBehaviour
         _cycle.SetBool("IsCycling", false);
         _cyclist.SetBool("IsCycling", false);
         isCycling = false;
+
+        // Play cycleing stop audio
+        audioSource.clip = stopCyclingAudio;
+        audioSource.loop = false;
+        audioSource.Play();
     }
 
     // Start cycling
@@ -115,5 +134,21 @@ public class CyclingManager : MonoBehaviour
         _cycle.SetBool("IsCycling", true);
         _cyclist.SetBool("IsCycling", true);
         isCycling = true;
+
+        // Play cycleing stop audio
+        audioSource.clip = startCyclingAudio;
+        audioSource.Play();
+
+        StartCoroutine(PlayCyclingAudioWithDelay());
+    }
+
+    IEnumerator PlayCyclingAudioWithDelay()
+    {
+        yield return new WaitForSeconds(duration);
+
+        // Play cycleing stop audio
+        audioSource.clip = cyclingAudio;
+        audioSource.loop = true;
+        audioSource.Play();
     }
 }
