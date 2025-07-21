@@ -21,10 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: SuperSimpleSkybox
-  m_Shader: {fileID: -6465566751694194690, guid: 99260826d72a8d543981d52b92aa0b53,
-    type: 3}
-  m_Parent: {fileID: 0}
-  m_ModifiedSerializedProperties: 0
+  m_Shader: {fileID: -6465566751694194690, guid: 99260826d72a8d543981d52b92aa0b53, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -33,7 +30,6 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -188,7 +184,7 @@ Material:
     - _CloudFalloff: 0.313
     - _CloudOpacity: 1
     - _CloudSharpness: 0.8
-    - _Cloudiness: 0.282
+    - _Cloudiness: 0.2
     - _Clouds_Enabled: 1
     - _ColorBlend: 0.5
     - _Constant_Color_Mode: 0
@@ -205,7 +201,7 @@ Material:
     - _GroundFadeAmount: 0.02
     - _Ground_Fade: -0.01
     - _Ground_Height: -0.02
-    - _HorizonSaturationAmount: 0.894
+    - _HorizonSaturationAmount: 0.865
     - _HorizonSaturationFalloff: 4.45
     - _Metallic: 0
     - _MoonAngularDiameter: 2
@@ -236,7 +232,7 @@ Material:
     - _Star_Frequency: 0
     - _Star_Saturation: 1
     - _Star_Sharness: 0
-    - _Stars_Enabled: 1
+    - _Stars_Enabled: 0
     - _SunAngularDiameter: 2
     - _SunFalloff: 10
     - _SunFalloffIntensity: 1
@@ -245,10 +241,10 @@ Material:
     - _Sun_Angular_Diameter: 2
     - _Sun_Enabled: 1
     - _Sun_Sky_Lighting_Enabled: 1
-    - _SunsetHorizontalFalloff: 0.6
-    - _SunsetIntensity: 0.3
+    - _SunsetHorizontalFalloff: 0.149
+    - _SunsetIntensity: 0.077
     - _SunsetRadialFalloff: 0.1
-    - _SunsetVerticalFalloff: 0.5
+    - _SunsetVerticalFalloff: 0.487
     - _Surface: 0
     - _UseProceduralStars: 0
     - _Use_Procedural_Stars: 1
@@ -257,42 +253,34 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - Color_0197f7de88654ee8b34249a3a7d8f895: {r: 1, g: 1, b: 1, a: 0}
-    - Color_087c7c6a54cd421ea0b14cf8cbe91604: {r: 0.24510501, g: 0.36502743, b: 0.8018868,
-        a: 0}
+    - Color_087c7c6a54cd421ea0b14cf8cbe91604: {r: 0.24510501, g: 0.36502743, b: 0.8018868, a: 0}
     - Color_0eee5b725b4b45429c8b68bd267c3a73: {r: 0, g: 0, b: 0, a: 0}
     - Color_1: {r: 0.005794592, g: 0.005072976, b: 0.047169805, a: 0}
     - Color_2: {r: 0.17381631, g: 0.20770916, b: 0.4245283, a: 0}
-    - Color_2625f34688a242ad9c054a4e70802cab: {r: 0.8584906, g: 0.18951581, b: 0.18951581,
-        a: 0}
-    - Color_3abd9cdc709143f4a6b752d81f6dce10: {r: 0.7490196, g: 0.7490196, b: 0.7490196,
-        a: 0}
-    - Color_471c9262b0e7431aa03cd1bede7954f6: {r: 0.035861105, g: 0.03773582, b: 0.034674235,
-        a: 0}
-    - Color_5074794776554ea8b483227a0be47d77: {r: 0.03773582, g: 0.014026332, b: 0.03284571,
-        a: 0}
+    - Color_2625f34688a242ad9c054a4e70802cab: {r: 0.8584906, g: 0.18951581, b: 0.18951581, a: 0}
+    - Color_3abd9cdc709143f4a6b752d81f6dce10: {r: 0.7490196, g: 0.7490196, b: 0.7490196, a: 0}
+    - Color_471c9262b0e7431aa03cd1bede7954f6: {r: 0.035861105, g: 0.03773582, b: 0.034674235, a: 0}
+    - Color_5074794776554ea8b483227a0be47d77: {r: 0.03773582, g: 0.014026332, b: 0.03284571, a: 0}
     - Color_6fe5bc5da928437793f83ff5c47b98f4: {r: 0.28541648, g: 1, b: 0, a: 0}
-    - Color_b83045f53afd45c1a2091b66fdb8817f: {r: 60.18107, g: 16.583433, b: 8.175538,
-        a: 0}
-    - Color_bf32551a9ac34681bfab13bece686333: {r: 9.734288, g: 6.1157827, b: 3.261751,
-        a: 0}
+    - Color_b83045f53afd45c1a2091b66fdb8817f: {r: 60.18107, g: 16.583433, b: 8.175538, a: 0}
+    - Color_bf32551a9ac34681bfab13bece686333: {r: 9.734288, g: 6.1157827, b: 3.261751, a: 0}
     - Color_ec9bc47a63f74d26b10babee8adc6826: {r: 0, g: 1, b: 0, a: 0}
-    - Color_f44fcaec730948d59b6061083e2da01a: {r: 0.18577784, g: 0.44340092, b: 0.6698113,
-        a: 0}
+    - Color_f44fcaec730948d59b6061083e2da01a: {r: 0.18577784, g: 0.44340092, b: 0.6698113, a: 0}
     - Vector2_0b65553d60624b139dec448bc178e727: {r: -1, g: -0.2, b: 0, a: 0}
     - Vector2_e2851918c56a42e886f043f816a05d48: {r: 3, g: 2, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _CloudColorDay: {r: 0.8415806, g: 0.8674226, b: 0.9056604, a: 1}
-    - _CloudColorNight: {r: 0.49056602, g: 0.38180846, b: 0.43443307, a: 1}
+    - _CloudColorNight: {r: 0.1724368, g: 0.18372731, b: 0.2924528, a: 1}
     - _CloudScale: {r: 2, g: 1, b: 0, a: 0}
-    - _CloudWindSpeed: {r: -0.2, g: 0.3, b: 0, a: 0}
+    - _CloudWindSpeed: {r: -0.1, g: 0.3, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _GroundColor: {r: 0.028301895, g: 0.028301895, b: 0.026566401, a: 0}
     - _HorizonColorDay: {r: 0.26637593, g: 0.5447223, b: 0.7735849, a: 1}
-    - _HorizonColorNight: {r: 0.025605002, g: 0.021300001, b: 0.05, a: 0}
-    - _MoonColor: {r: 0.67058825, g: 0.7254902, b: 0.7490196, a: 0}
+    - _HorizonColorNight: {r: 0.011764705, g: 0.020164022, b: 0.043137256, a: 0}
+    - _MoonColor: {r: 0.78964937, g: 0.83783823, b: 0.8584906, a: 0}
     - _SkyColorDay: {r: 0.03244037, g: 0.07068158, b: 0.254717, a: 0}
-    - _SkyColorNight: {r: 0.01, g: 0.002216981, b: 0.01, a: 0}
+    - _SkyColorNight: {r: 0.013883946, g: 0.018083503, b: 0.0754717, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _Star_Texture_Tint: {r: 1, g: 1, b: 1, a: 0}
     - _SunColorHorizon: {r: 154.19518, g: 71.51112, b: 32.73011, a: 0}
