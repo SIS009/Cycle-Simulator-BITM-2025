@@ -76,7 +76,7 @@ public class CyclingManager : MonoBehaviour
             float t = Mathf.Clamp01(timer / duration);
             cycleSpeed.m_Speed = Mathf.Lerp(startSpeed, targetSpeed, t);
 
-            if (t >= 1f)
+            if (t >= 0.5f)
             {
                 isTransitioning = false;
                 timer = 0f;
@@ -114,12 +114,12 @@ public class CyclingManager : MonoBehaviour
     }
 
     // Stop cycling
-    private void OnStopCycling()
+    public void OnStopCycling()
     {
         StartSpeedTransition(_cyclingSpeed, 0f);
         _cycle.SetBool("IsCycling", false);
         _cyclist.SetBool("IsCycling", false);
-        isCycling = false;
+       // isCycling = false;
 
         // Play cycleing stop audio
         audioSource.clip = stopCyclingAudio;
@@ -133,7 +133,7 @@ public class CyclingManager : MonoBehaviour
         StartSpeedTransition(0f, _cyclingSpeed);
         _cycle.SetBool("IsCycling", true);
         _cyclist.SetBool("IsCycling", true);
-        isCycling = true;
+       // isCycling = true;
 
         // Play cycleing stop audio
         audioSource.clip = startCyclingAudio;
