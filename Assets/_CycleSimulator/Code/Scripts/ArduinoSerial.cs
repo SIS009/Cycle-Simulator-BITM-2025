@@ -1,178 +1,178 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Globalization;
 using System.IO.Ports;
-using System;
+using System.Text.RegularExpressions;
+using System.Threading;
+using UnityEngine;
 
 public class ArduinoSerial : MonoBehaviour
 {
-    private SerialPort sp;
-    private string data;
-    public static bool isPaused = false;
+    [Header("Serial settings")]
+    [SerializeField] private string portName = "COM11";
+    [SerializeField] private int baudRate = 115200;
 
-    public float targetTimeScale = 5f;
-    public float speed = 1f; // jitni fast increase chahiye
+    public float Angle { get; private set; }
+    public float Velocity { get; private set; }
+    public int Scene { get; private set; }
 
-    [Header("Serial Settings")]
-    public string portName = "COM18";
-    public int baudRate = 9600;
+    private SerialPort serialPort;
+    private Thread readingThread;
+    private volatile bool keepReading;
 
-    [Header("Data")]
-    public bool cycleToMove = false;
-    public int sensorData;
+    private readonly ConcurrentQueue<string> receivedLines =
+        new ConcurrentQueue<string>();
 
-    public static ArduinoSerial instance;
+    private static readonly Regex DataPattern = new Regex(
+        @"Angle:\s*(-?\d+(?:\.\d+)?)\s*,\s*" +
+        @"Velocity:\s*(-?\d+(?:\.\d+)?)\s*,\s*" +
+        @"Scene:\s*(-?\d+)",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase
+    );
 
-    void Awake()
+    private void Start()
     {
-        if (instance == null) instance = this;
+        OpenSerialPort();
     }
 
-    void Start()
+    private void OpenSerialPort()
     {
         try
         {
-            sp = new SerialPort(portName, baudRate);
-            sp.ReadTimeout = 100;
-            sp.Open();
-            Debug.Log("✅ Serial port opened");
-        }
-        catch (Exception e)
-        {
-            Debug.LogError("❌ Failed to open serial port: " + e.Message);
-        }
-    }
-
-    void Update()
-    {
-        if (sp == null || !sp.IsOpen) return;
-
-        bool dataReceived = false; // ✅ check flag
-
-        try
-        {
-            data = sp.ReadLine();
-
-            if (!string.IsNullOrEmpty(data))
+            serialPort = new SerialPort(portName, baudRate)
             {
-                dataReceived = true;
+                ReadTimeout = 100,
+                NewLine = "\n"
+            };
 
-                Debug.Log("RAW: [" + data + "]");
+            serialPort.Open();
+            serialPort.DiscardInBuffer();
 
-                data = data.Trim();
+            keepReading = true;
+            readingThread = new Thread(ReadSerialData)
+            {
+                IsBackground = true
+            };
 
-                string numbersOnly = System.Text.RegularExpressions.Regex.Match(data, @"\d+").Value;
+            readingThread.Start();
 
-                if (int.TryParse(numbersOnly, out int arduinoValue))
+            Debug.Log($"Arduino connected on {portName} at {baudRate} baud.");
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"Could not open {portName}: {exception.Message}");
+        }
+    }
+
+    private void ReadSerialData()
+    {
+        while (keepReading)
+        {
+            try
+            {
+                string line = serialPort.ReadLine().Trim();
+
+                if (!string.IsNullOrWhiteSpace(line))
                 {
-                    Debug.Log("✅ Arduino Value: " + arduinoValue);
-
-                    if (arduinoValue > 5 && arduinoValue >=10 && CyclingManager.Instance != null)
-                    {
-                        cycleToMove = true;
-                        isPaused = false;
-                        Time.timeScale = 6;
-                        CyclingManager.Instance.boardValueForMovement = true;
-                        CyclingManager.Instance.isCycling = false;
-                        CyclingManager.Instance._cyclingSpeed = 10f;
-
-
-
-                        /*if (CyclingManager.Instance != null)
-                        {
-                            CyclingManager.Instance.boardValueForMovement = true;
-                            CyclingManager.Instance.isCycling = false;
-                            CyclingManager.Instance._cyclingSpeed = 10f;
-                            isPaused = false;
-                            Time.timeScale = 3f;
-                            //Time.timeScale = Mathf.MoveTowards(Time.timeScale, targetTimeScale, speed * Time.unscaledDeltaTime);
-
-                        }*/
-
-                        if (arduinoValue >= 20)
-                        {
-                            cycleToMove = true;
-                            isPaused = false;
-                            Time.timeScale = 2;
-                            CyclingManager.Instance.boardValueForMovement = true;
-                            CyclingManager.Instance.isCycling = false;
-                            CyclingManager.Instance._cyclingSpeed = 10f;
-                        }
-                    if(arduinoValue >= 30)
-                        {
-                            cycleToMove = true;
-                            isPaused = false;
-                            Time.timeScale = 3;
-                            CyclingManager.Instance.boardValueForMovement = true;
-                            CyclingManager.Instance.isCycling = false;
-                            CyclingManager.Instance._cyclingSpeed = 10f;
-                        }
-
-                        if (arduinoValue < 5)
-                        {
-                            cycleToMove = false;
-                            isPaused = true;
-                            Time.timeScale = 0f;
-                        }
-
-
-                    }
-                    
-                    else
-                    {
-                        cycleToMove = false;
-                        isPaused = true;
-                        Time.timeScale = 0f;
-
-                        if (CyclingManager.Instance != null)
-                        {
-                            CyclingManager.Instance.boardValueForMovement = false;
-                            CyclingManager.Instance.isCycling = true;
-                            CyclingManager.Instance._cyclingSpeed = 0f;
-                        }
-                        
-                    }
+                    receivedLines.Enqueue(line);
+                }
+            }
+            catch (TimeoutException)
+            {
+                // Normal when no complete line is currently available.
+            }
+            catch (Exception exception)
+            {
+                if (keepReading)
+                {
+                    receivedLines.Enqueue($"ERROR:{exception.Message}");
                 }
             }
         }
-        catch (Exception)
+    }
+
+    private void Update()
+    {
+        while (receivedLines.TryDequeue(out string line))
         {
-            // ❌ No data received → handled below
-        }
-
-        // ❗ If NO data in this frame → STOP immediately
-        if (!dataReceived)
-        {
-            cycleToMove = true;
-            Time.timeScale = 0;
-
-
-            if (CyclingManager.Instance != null)
+            if (line.StartsWith("ERROR:", StringComparison.Ordinal))
             {
-                CyclingManager.Instance.boardValueForMovement = false;
-                CyclingManager.Instance.isCycling = true;
-                CyclingManager.Instance._cyclingSpeed = 0f;
+                Debug.LogError(line);
+                continue;
             }
 
-            Debug.LogWarning("⚠️ No Data → Instant STOP");
+            ParseArduinoData(line);
         }
     }
 
-    public void stop()
+    private void ParseArduinoData(string line)
     {
-        if(isPaused == true)
+        Match match = DataPattern.Match(line);
+
+        if (!match.Success)
         {
-            Time.timeScale = 0f;
+            Debug.LogWarning($"Unrecognised Arduino data: {line}");
+            return;
         }
-       
+
+        bool angleParsed = float.TryParse(
+            match.Groups[1].Value,
+            NumberStyles.Float,
+            CultureInfo.InvariantCulture,
+            out float angle);
+
+        bool velocityParsed = float.TryParse(
+            match.Groups[2].Value,
+            NumberStyles.Float,
+            CultureInfo.InvariantCulture,
+            out float velocity);
+
+        bool sceneParsed = int.TryParse(
+            match.Groups[3].Value,
+            NumberStyles.Integer,
+            CultureInfo.InvariantCulture,
+            out int scene);
+
+        if (!angleParsed || !velocityParsed || !sceneParsed)
+        {
+            Debug.LogWarning($"Could not parse Arduino data: {line}");
+            return;
+        }
+
+        Angle = angle;
+        Velocity = velocity;
+        Scene = scene;
+
+        Debug.Log(
+            $"Angle: {Angle}, Velocity: {Velocity}, Scene: {Scene}"
+        );
     }
 
-
-
-    void OnApplicationQuit()
+    private void OnDestroy()
     {
-        if (sp != null && sp.IsOpen)
+        CloseSerialPort();
+    }
+
+    private void OnApplicationQuit()
+    {
+        CloseSerialPort();
+    }
+
+    private void CloseSerialPort()
+    {
+        keepReading = false;
+
+        if (readingThread != null && readingThread.IsAlive)
         {
-            sp.Close();
-            Debug.Log("🔌 Serial port closed");
+            readingThread.Join(500);
         }
+
+        if (serialPort != null && serialPort.IsOpen)
+        {
+            serialPort.Close();
+        }
+
+        serialPort?.Dispose();
+        serialPort = null;
     }
 }

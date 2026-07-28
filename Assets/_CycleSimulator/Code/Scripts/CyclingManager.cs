@@ -55,18 +55,18 @@ public class CyclingManager : MonoBehaviour
         // 'boardValueForMovement' will control cycle directly from editor data
         // 'ArduinoSerial.instance.cycleToMove' will control cycle from Arduino's data
         // 'boardValueForMovement' or 'ArduinoSerial.instance.cycleToMove' anyone of these will control the cycle
-        if ((boardValueForMovement || !ArduinoSerial.instance.cycleToMove) && !isCycling)
-        {
-            // Start cycling
-            OnStartCycling();
+        // if ((boardValueForMovement || !ArduinoSerial.instance.cycleToMove) && !isCycling)
+        // {
+        //     // Start cycling
+        //     OnStartCycling();
 
-            isRunningFirstTime = false;
-        }
-        else if (!(boardValueForMovement || !ArduinoSerial.instance.cycleToMove) && isCycling)
-        {
-            // Stop cycling
-            OnStopCycling();
-        }
+        //     isRunningFirstTime = false;
+        // }
+        // else if (!(boardValueForMovement || !ArduinoSerial.instance.cycleToMove) && isCycling)
+        // {
+        //     // Stop cycling
+        //     OnStopCycling();
+        // }
         // --------------------------------------------------------------------------------------------------------
 
         // If transitioning, update speed over time
