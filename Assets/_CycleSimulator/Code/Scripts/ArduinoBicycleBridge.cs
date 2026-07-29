@@ -10,7 +10,7 @@ using SBPScripts;
 
 /// <summary>
 /// Reads Arduino data such as:
-/// Angle: 2.5,Velocity: 18,Scene: 3
+/// Angle: 2.5,Velocity: 18,Scene: 3,Trigger: 1
 ///
 /// This script does not modify BicycleController. It writes to the controller's
 /// public input fields after BicycleController.Update() has processed keyboard input.
@@ -32,8 +32,8 @@ public sealed class ArduinoBicycleBridge : MonoBehaviour
     [SerializeField] private bool findBicycleAutomatically = true;
 
     [Header("Arduino Mapping")]
-    [SerializeField] private float minimumAngle = -45f;
-    [SerializeField] private float maximumAngle = 45f;
+    [SerializeField] private float minimumAngle = -15f;
+    [SerializeField] private float maximumAngle = 15f;
     [SerializeField] private float angleDeadZone = 1f;
     [SerializeField] private bool invertSteering = false;
 
@@ -61,6 +61,7 @@ public sealed class ArduinoBicycleBridge : MonoBehaviour
     public float Angle { get; private set; }
     public float Velocity { get; private set; }
     public int ArduinoSceneValue { get; private set; }
+    public int TriggerValue { get; private set; }
 
     private SerialPort serialPort;
     private Thread serialThread;
@@ -74,12 +75,15 @@ public sealed class ArduinoBicycleBridge : MonoBehaviour
     private float currentSteeringAxis;
     private float currentAccelerationAxis;
     private int lastHandledSceneValue = int.MinValue;
+    private int lastTriggerValue = 1;
+    private bool hasTriggerReading;
     private float nextBicycleSearchTime;
 
     private static readonly Regex PacketPattern = new Regex(
         @"Angle\s*:\s*(-?\d+(?:\.\d+)?)\s*,\s*" +
         @"Velocity\s*:\s*(-?\d+(?:\.\d+)?)\s*,\s*" +
-        @"Scene\s*:\s*(-?\d+)",
+        @"Scene\s*:\s*(-?\d+)\s*,\s*" +
+        @"Trigger\s*:\s*(-?\d+)",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private void Awake()
@@ -201,7 +205,8 @@ public sealed class ArduinoBicycleBridge : MonoBehaviour
                 continue;
             }
 
-            if (!TryParsePacket(line, out float angle, out float velocity, out int sceneValue))
+            if (!TryParsePacket(line, out float angle, out float velocity,
+                    out int sceneValue, out int triggerValue))
             {
                 if (printReceivedData)
                 {
@@ -214,16 +219,18 @@ public sealed class ArduinoBicycleBridge : MonoBehaviour
             Angle = Mathf.Clamp(angle, minimumAngle, maximumAngle);
             Velocity = Mathf.Clamp(velocity, minimumVelocity, maximumVelocity);
             ArduinoSceneValue = sceneValue;
+            TriggerValue = triggerValue;
             hasValidPacket = true;
             lastValidPacketTime = Time.realtimeSinceStartup;
 
             if (printReceivedData)
             {
                 Debug.Log(
-                    $"Arduino -> Angle: {Angle:F2}, Velocity: {Velocity:F2}, Scene: {ArduinoSceneValue}");
+                    $"Arduino -> Angle: {Angle:F2}, Velocity: {Velocity:F2}, " +
+                    $"Scene: {ArduinoSceneValue}, Trigger: {TriggerValue}");
             }
 
-            HandleSceneCommand(ArduinoSceneValue);
+            HandleSceneCommand(ArduinoSceneValue, TriggerValue);
         }
     }
 
@@ -231,11 +238,13 @@ public sealed class ArduinoBicycleBridge : MonoBehaviour
         string line,
         out float angle,
         out float velocity,
-        out int sceneValue)
+        out int sceneValue,
+        out int triggerValue)
     {
         angle = 0f;
         velocity = 0f;
         sceneValue = 0;
+        triggerValue = 0;
 
         Match match = PacketPattern.Match(line.Trim());
 
@@ -258,21 +267,54 @@ public sealed class ArduinoBicycleBridge : MonoBehaviour
                    match.Groups[3].Value,
                    NumberStyles.Integer,
                    CultureInfo.InvariantCulture,
-                   out sceneValue);
+                   out sceneValue)
+               && int.TryParse(
+                   match.Groups[4].Value,
+                   NumberStyles.Integer,
+                   CultureInfo.InvariantCulture,
+                   out triggerValue);
     }
 
-    private void HandleSceneCommand(int sceneValue)
+    /// <summary>
+    /// The scene action fires only on the Trigger's falling edge (previous value
+    /// was non-zero, current value is 0), so a single press acts once instead of
+    /// every frame while Trigger stays at 0.
+    ///  - Scene changed  + Trigger becomes 0 -> load the new scene.
+    ///  - Scene unchanged + Trigger becomes 0 -> reload the current scene.
+    /// </summary>
+    private void HandleSceneCommand(int sceneValue, int triggerValue)
     {
-        if (!enableSceneSwitching || sceneValue == lastHandledSceneValue)
+        if (!enableSceneSwitching)
+        {
+            lastTriggerValue = triggerValue;
+            hasTriggerReading = true;
+            return;
+        }
+
+        bool triggerFallingEdge = hasTriggerReading && lastTriggerValue != 0 && triggerValue == 0;
+
+        lastTriggerValue = triggerValue;
+        hasTriggerReading = true;
+
+        // Only act at the moment Trigger transitions to 0.
+        if (!triggerFallingEdge)
         {
             return;
         }
 
+        bool sceneChanged = sceneValue != lastHandledSceneValue;
         lastHandledSceneValue = sceneValue;
 
         int targetBuildIndex = sceneValuesAreOneBased
             ? sceneValue - 1
             : sceneValue;
+
+        if (!sceneChanged)
+        {
+            // Same scene value: restart the current scene.
+            LoadSceneWithLoader(SceneManager.GetActiveScene().buildIndex);
+            return;
+        }
 
         if (targetBuildIndex < 0 || targetBuildIndex >= controlledSceneCount)
         {
@@ -290,12 +332,23 @@ public sealed class ArduinoBicycleBridge : MonoBehaviour
             return;
         }
 
-        if (SceneManager.GetActiveScene().buildIndex == targetBuildIndex)
-        {
-            return;
-        }
+        LoadSceneWithLoader(targetBuildIndex);
+    }
 
-        SceneManager.LoadScene(targetBuildIndex);
+    /// <summary>
+    /// Loads a scene through the LoadingScreen singleton (animated loader) when it
+    /// is available, and falls back to a direct SceneManager load otherwise.
+    /// </summary>
+    private void LoadSceneWithLoader(int buildIndex)
+    {
+        if (LoadingScreen.instance != null)
+        {
+            LoadingScreen.instance.LoadScene(buildIndex);
+        }
+        else
+        {
+            SceneManager.LoadScene(buildIndex);
+        }
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
