@@ -1,0 +1,86 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5231382578804386665
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 7
+--- !u!114 &-736344555113753814
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 639247ca83abc874e893eb93af2b5e44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 0
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Heat Distortion Explosion 2
+  m_Shader: {fileID: -6465566751694194690, guid: 3e076b4f27c87104089c3ff0ccb31341,
+    type: 3}
+  m_Parent: {fileID: 2100000, guid: e792109efbda21b409d39d983d41594e, type: 2}
+  m_ModifiedSerializedProperties: 16
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: 2980
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _Distortion_Texture:
+        m_Texture: {fileID: 2800000, guid: d190a8dbf2bde9b4aae941aca8a80a08, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_41ce8598a51c499fb9dabe046a006289_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 173fcdfb1d63def4198ad3fc8a61d824, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_59eb81ca8bd04acda90be348e0029c00_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 79afa527c4393c147b0bf193389e18cf, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_c7c00363c6804d908cd29c0357ab40c9_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: b77a99c429d842c4a9855c98c4ebb7ea, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_faa7c412501f470d879439e81794f93d_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: d190a8dbf2bde9b4aae941aca8a80a08, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _BUILTIN_QueueControl: 1
+    - _Depth_Fade_Length: 0.015
+    - _Distortion_Mask_Contrast: 0.5
+    - _Distortion_Mask_Radius: 0
+    - _HeatDistortion: 0.16
+    - _Noise_Strength: 0.22
+    - _QueueControl: 1
+    - _QueueOffset: -50
+    m_Colors:
+    - _DistortionSpeed: {r: -0.1, g: -0.35, b: 0, a: 0}
+    - _Noise_Tile: {r: 2.5, g: 2.5, b: 0, a: 0}
+  m_BuildTextureStacks: []
