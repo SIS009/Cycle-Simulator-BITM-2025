@@ -18,13 +18,6 @@ public class LoadingScreen : MonoBehaviour
     [SerializeField] private TMP_Text percentageText;       // Optional "42%" label (use Text if no TMP)
     [SerializeField] private Image fillImage;               // Optional: fill Image if you use a bar without a Slider
 
-    [Header("Settings")]
-    [Tooltip("How quickly the bar catches up to the real progress. Higher = snappier.")]
-    [SerializeField] private float fillSpeed = 2f;
-
-    [Tooltip("Seconds to hold on 100% before activating the scene.")]
-    [SerializeField] private float holdAtFullDuration = 0.25f;
-
     void Awake()
     {
         if (instance != null && instance != this)
@@ -72,27 +65,18 @@ public class LoadingScreen : MonoBehaviour
         // Don't let the scene swap in the instant it finishes loading.
         operation.allowSceneActivation = false;
 
-        float displayedProgress = 0f;
-
         while (!operation.isDone)
         {
             // Unity reports 0.0 -> 0.9 during load, then 0.9 -> 1.0 on activation.
-            // Normalize so the bar reaches a true 100%.
-            float targetProgress = Mathf.Clamp01(operation.progress / 0.9f);
+            // Normalize so the bar reflects the real, whole-scene load progress.
+            float realProgress = Mathf.Clamp01(operation.progress / 0.9f);
 
-            // Smoothly move the displayed value toward the real progress.
-            displayedProgress = Mathf.MoveTowards(
-                displayedProgress, targetProgress, fillSpeed * Time.deltaTime);
+            UpdateUI(realProgress);
 
-            UpdateUI(displayedProgress);
-
-            // Once the smoothed bar has visually reached the end, activate the scene.
-            if (displayedProgress >= 0.999f && targetProgress >= 1f)
+            // Activate the scene instantly once the bar reaches 100%.
+            if (realProgress >= 1f)
             {
                 UpdateUI(1f);
-                if (holdAtFullDuration > 0f)
-                    yield return new WaitForSeconds(holdAtFullDuration);
-
                 operation.allowSceneActivation = true;
             }
 
@@ -109,6 +93,6 @@ public class LoadingScreen : MonoBehaviour
             fillImage.fillAmount = value;
 
         if (percentageText != null)
-            percentageText.text = "LOADING: " + Mathf.RoundToInt(value * 100f) + "%";
+            percentageText.text = "LOADING: " + (value * 100f).ToString("F1") + "%";
     }
 }

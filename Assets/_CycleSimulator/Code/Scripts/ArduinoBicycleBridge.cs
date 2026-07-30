@@ -18,8 +18,6 @@ using SBPScripts;
 [DefaultExecutionOrder(1000)]
 public sealed class ArduinoBicycleBridge : MonoBehaviour
 {
-    // private static ArduinoBicycleBridge instance;
-
     [Header("Serial Port")]
     [SerializeField] private string portName = "COM11";
     [SerializeField] private int baudRate = 115200;
@@ -37,8 +35,9 @@ public sealed class ArduinoBicycleBridge : MonoBehaviour
     [SerializeField] private float angleDeadZone = 1f;
     [SerializeField] private bool invertSteering = false;
 
+    [Tooltip("The Arduino Velocity range. The board reports 0-25.")]
     [SerializeField] private float minimumVelocity = 0f;
-    [SerializeField] private float maximumVelocity = 30f;
+    [SerializeField] private float maximumVelocity = 25f;
     [SerializeField] private float velocityDeadZone = 0.10f;
 
     [Tooltip("Larger values make steering respond faster.")]
@@ -46,6 +45,31 @@ public sealed class ArduinoBicycleBridge : MonoBehaviour
 
     [Tooltip("Larger values make acceleration respond faster.")]
     [SerializeField] private float velocityResponse = 6f;
+
+    [Header("Bicycle Speed Stats (from Velocity 0-25)")]
+    [Tooltip("Scale topSpeed, torque and pedalingSpeed from the Arduino Velocity. " +
+             "The bike's authored values act as the full-scale (max Velocity) reference.")]
+    [SerializeField] private bool driveSpeedStatsFromVelocity = true; // Only Mars make it DISABLE
+
+    [Tooltip("Fraction of the bike's authored stats applied at Velocity 0 (idle).")]
+    [SerializeField, Range(0f, 1f)] private float statsFractionAtZeroVelocity = 0.2f;
+
+    [Tooltip("Multiplier applied to the authored topSpeed at the maximum Velocity. " +
+             "1 = authored value, higher = faster. Raise this to speed up the ride.")]
+    [SerializeField, Min(0f)] private float topSpeedMaxMultiplier = 4f; // Earth = 4f, Mars = Disable
+
+    [Tooltip("Multiplier applied to the authored torque at the maximum Velocity.")]
+    [SerializeField, Min(0f)] private float torqueMaxMultiplier = 3f; // Earth = 3f, Mars = Disable
+
+    [Tooltip("Multiplier applied to the authored pedalingSpeed at the maximum Velocity.")]
+    [SerializeField, Min(0f)] private float pedalingSpeedMaxMultiplier = 3f; // Earth = 3f, Mars = Disable
+
+    [Tooltip("Seconds used to smooth stat changes. 0 applies them instantly.")]
+    [SerializeField, Min(0f)] private float speedStatsSmoothTime = 0.25f;
+
+    [Tooltip("BicycleSpeedSelector writes the same three stats every physics step. " +
+             "When enabled, it is disabled on the bike so it does not fight this script.")]
+    [SerializeField] private bool disableSpeedSelectorWhenDriving = true;
 
     [Header("Scene Switching")]
     [SerializeField] private bool enableSceneSwitching = true;
@@ -79,6 +103,17 @@ public sealed class ArduinoBicycleBridge : MonoBehaviour
     private bool hasTriggerReading;
     private float nextBicycleSearchTime;
 
+    // Authored bike stats captured from the current BicycleController. These are the
+    // full-scale reference the Arduino Velocity scales down from.
+    private float baseTopSpeed;
+    private float baseTorque;
+    private float basePedalingSpeed;
+    private bool hasCapturedBaseStats;
+
+    private float topSpeedSmoothVelocity;
+    private float torqueSmoothVelocity;
+    private float pedalingSpeedSmoothVelocity;
+
     private static readonly Regex PacketPattern = new Regex(
         @"Angle\s*:\s*(-?\d+(?:\.\d+)?)\s*,\s*" +
         @"Velocity\s*:\s*(-?\d+(?:\.\d+)?)\s*,\s*" +
@@ -88,14 +123,6 @@ public sealed class ArduinoBicycleBridge : MonoBehaviour
 
     private void Awake()
     {
-        // if (instance != null && instance != this)
-        // {
-        //     Destroy(gameObject);
-        //     return;
-        // }
-
-        // instance = this;
-        // DontDestroyOnLoad(gameObject);
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
@@ -161,6 +188,69 @@ public sealed class ArduinoBicycleBridge : MonoBehaviour
         // BicycleController uses the raw value mainly as a forward/reverse gate.
         bicycleController.rawCustomAccelerationAxis =
             currentAccelerationAxis > 0.001f ? 1f : 0f;
+
+        if (driveSpeedStatsFromVelocity && hasCapturedBaseStats)
+        {
+            ApplySpeedStatsFromVelocity(dataIsFresh);
+        }
+    }
+
+    /// <summary>
+    /// Scales the bike's topSpeed, torque and pedalingSpeed in proportion to the
+    /// Arduino Velocity (0-25). Velocity 0 uses statsFractionAtZeroVelocity of the
+    /// authored stats; the maximum Velocity uses statsFractionAtMaxVelocity.
+    /// </summary>
+    private void ApplySpeedStatsFromVelocity(bool dataIsFresh)
+    {
+        // When the data goes stale, fall back to the idle (Velocity 0) stats.
+        float effectiveVelocity = dataIsFresh ? Velocity : minimumVelocity;
+
+        float velocityRatio = Mathf.Clamp01(
+            Mathf.InverseLerp(minimumVelocity, maximumVelocity, effectiveVelocity));
+
+        // Each stat blends from its idle fraction up to its own max multiplier.
+        float targetTopSpeed = baseTopSpeed * Mathf.Lerp(
+            statsFractionAtZeroVelocity, topSpeedMaxMultiplier, velocityRatio);
+
+        float targetTorque = baseTorque * Mathf.Lerp(
+            statsFractionAtZeroVelocity, torqueMaxMultiplier, velocityRatio);
+
+        float targetPedalingSpeed = basePedalingSpeed * Mathf.Lerp(
+            statsFractionAtZeroVelocity, pedalingSpeedMaxMultiplier, velocityRatio);
+
+        if (speedStatsSmoothTime <= 0f)
+        {
+            bicycleController.topSpeed = targetTopSpeed;
+            bicycleController.torque = targetTorque;
+
+            if (bicycleController.pedalAdjustments != null)
+            {
+                bicycleController.pedalAdjustments.pedalingSpeed = targetPedalingSpeed;
+            }
+
+            return;
+        }
+
+        bicycleController.topSpeed = Mathf.SmoothDamp(
+            bicycleController.topSpeed,
+            targetTopSpeed,
+            ref topSpeedSmoothVelocity,
+            speedStatsSmoothTime);
+
+        bicycleController.torque = Mathf.SmoothDamp(
+            bicycleController.torque,
+            targetTorque,
+            ref torqueSmoothVelocity,
+            speedStatsSmoothTime);
+
+        if (bicycleController.pedalAdjustments != null)
+        {
+            bicycleController.pedalAdjustments.pedalingSpeed = Mathf.SmoothDamp(
+                bicycleController.pedalAdjustments.pedalingSpeed,
+                targetPedalingSpeed,
+                ref pedalingSpeedSmoothVelocity,
+                speedStatsSmoothTime);
+        }
     }
 
     private float MapAngleToSteering(float angle)
@@ -365,6 +455,43 @@ public sealed class ArduinoBicycleBridge : MonoBehaviour
         }
 
         bicycleController = FindObjectOfType<BicycleController>();
+
+        if (bicycleController != null)
+        {
+            CaptureBaseStats();
+        }
+    }
+
+    /// <summary>
+    /// Records the bike's authored topSpeed, torque and pedalingSpeed so the Arduino
+    /// Velocity can scale them proportionally. Re-captured for each new controller.
+    /// </summary>
+    private void CaptureBaseStats()
+    {
+        // Prevent BicycleSpeedSelector from overwriting the stats we drive here.
+        if (driveSpeedStatsFromVelocity && disableSpeedSelectorWhenDriving)
+        {
+            BicycleSpeedSelector speedSelector =
+                bicycleController.GetComponent<BicycleSpeedSelector>();
+
+            if (speedSelector != null && speedSelector.enabled)
+            {
+                speedSelector.enabled = false;
+            }
+        }
+
+        baseTopSpeed = bicycleController.topSpeed;
+        baseTorque = bicycleController.torque;
+        basePedalingSpeed = bicycleController.pedalAdjustments != null
+            ? bicycleController.pedalAdjustments.pedalingSpeed
+            : 0f;
+
+        hasCapturedBaseStats = true;
+
+        // Reset smoothing so a freshly found bike does not lurch from stale values.
+        topSpeedSmoothVelocity = 0f;
+        torqueSmoothVelocity = 0f;
+        pedalingSpeedSmoothVelocity = 0f;
     }
 
     private void OpenSerialPort()
@@ -457,13 +584,7 @@ public sealed class ArduinoBicycleBridge : MonoBehaviour
 
     private void OnDestroy()
     {
-        // if (instance != this)
-        // {
-        //     return;
-        // }
-
         SceneManager.sceneLoaded -= OnSceneLoaded;
         CloseSerialPort();
-        // instance = null;
     }
 }
