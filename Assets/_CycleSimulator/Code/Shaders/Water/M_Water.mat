@@ -106,10 +106,10 @@ Material:
     - _ClearCoatSmoothness: 0
     - _Cull: 2
     - _Cutoff: 0.5
-    - _Depth: 1
+    - _Depth: 1.101
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
-    - _Displacement: 0.01
+    - _Displacement: 0.0005
     - _Displacement_Map_Tiling: 5
     - _DstBlend: 0
     - _EnvironmentReflections: 1
@@ -127,15 +127,15 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _Strength: 0.204
+    - _Strength: 0.189
     - _Surface: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Deep_Water_Color: {r: 0.61, g: 0.727, b: 1, a: 0.7529412}
+    - _Deep_Water_Color: {r: 0.25490198, g: 0.20882554, b: 0.16441178, a: 0.7529412}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Shallow_Water_Color: {r: 0.5294118, g: 0.636801, b: 0.8980392, a: 0.49019608}
+    - _Shallow_Water_Color: {r: 0.255, g: 0.21856157, b: 0.164475, a: 0.49019608}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
